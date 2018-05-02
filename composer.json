@@ -1,0 +1,32 @@
+{
+    "name": "sunnysideup/ecommerce_orderstep_feefo",
+    "type": "silverstripe-module",
+    "description": "Allows e-commerce to interact with FEEFO marketing services",
+    "keywords": [
+        "Silverstripe-CMS",
+        "CMS",
+        "Silverstripe",
+        "DataObject",
+        "e-commerce",
+        "ecommerce",
+        "marketing",
+        "feedback",
+        "feefo",
+        "orderstep"
+    ],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Nicolaas Francken",
+            "email": "modules@sunnysideup.co.nz",
+            "role": "lead developer"
+        }
+    ],
+    "require": {
+        "silverstripe/framework": "~3.6",
+        "sunnysideup/ecommerce": "*"
+    },
+    "extra": {
+        "installer-name": "ecommerce_orderstep_feefo"
+    }
+}
