@@ -24,7 +24,8 @@
     ],
     "require": {
         "silverstripe/framework": "~3.6",
-        "sunnysideup/ecommerce": "*"
+        "sunnysideup/ecommerce": "*",
+        "ext-curl": "*"
     },
     "extra": {
         "installer-name": "ecommerce_orderstep_feefo"

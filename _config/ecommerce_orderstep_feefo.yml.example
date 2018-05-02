@@ -1,0 +1,13 @@
+############################
+# ECOMMERCE ORDER STEP FEEFO
+############################
+
+EntersaleremotelyAPIConnector:
+  ### REQUIRED ###
+  api_key: ""
+  ### REQUIRED ###
+  merchant_identifier: ""
+
+
+############################
+############################
