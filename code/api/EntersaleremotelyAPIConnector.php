@@ -28,9 +28,11 @@ class EntersaleremotelyAPIConnector extends Object
      *
      * @param  Order $order - the order to be assessed
      *
+     * @return array $messages - an array of message regarding the success of each curl request - one for each Order Item
      */
     public function sendOrderDataToFeefo($order)
     {
+        $messages = [];
         //api details
         $apiKey = Config::inst()->get('EntersaleremotelyAPIConnector', 'api_key');
         $merchant = Config::inst()->get('EntersaleremotelyAPIConnector', 'merchant_identifier');
@@ -67,16 +69,11 @@ class EntersaleremotelyAPIConnector extends Object
                 'productsearchcode'=> $product->Title,
                 'productlink' => 'https://www.picspeanutbutter.com/buy/buy-online/380g-smooth-no-salt/'
             ];
-            var_dump($params);
-            $this->sendCurlRequest($params);
-            die('sdfdsf');
-            # code...
+            $result = $this->sendCurlRequest($params);
+            array_push($messages, $result);
         }
 
-
-
-
-        return 'test';
+        return $messages;
     }
 
     /**
@@ -103,8 +100,6 @@ class EntersaleremotelyAPIConnector extends Object
         $reply = curl_exec($ch);
 
         curl_close($ch);
-
-        var_dump($reply);
         return $reply;
     }
 
