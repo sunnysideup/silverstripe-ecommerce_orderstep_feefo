@@ -76,7 +76,7 @@ class EntersaleremotelyAPIConnector extends Object
                 'amount ' => $orderItem->CalculatedTotal,
                 'description' => $productTitle,
                 'productsearchcode'=> $productTitle,
-                'productlink' => 'https://www.picspeanutbutter.com/buy/buy-online/380g-smooth-no-salt/'
+                'productlink' => $link
             ];
 
             $result = $this->sendCurlRequest($params);

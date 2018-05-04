@@ -5,6 +5,13 @@
 class OrderStepFeefo extends OrderStep
 {
 
+    /**
+     * The OrderStatusLog that is relevant to the particular step.
+     *
+     * @var string
+     */
+    protected $relevantLogEntryClassName = 'OrderStatusLog_FeefoLog';
+
     private static $db = array(
         'FeedbackDelay' => 'Int'
     );
@@ -46,25 +53,22 @@ class OrderStepFeefo extends OrderStep
     {
 
         $api = Injector::inst()->get('EntersaleremotelyAPIConnector');
-        try {
-            $result = $api->sendOrderDataToFeefo($order, $this->FeedbackDelay);
-            $result = $this->convertArrayToHTMLList($result);
 
-            $className = $this->getRelevantLogEntryClassName();
+        $result = $api->sendOrderDataToFeefo($order, $this->FeedbackDelay);
+        $result = $this->convertArrayToHTMLList($result);
 
-            if (class_exists($className)) {
-                $obj = $className::create();
-                if (is_a($obj, Object::getCustomClass('OrderStatusLog'))) {
-                    $obj->OrderID = $order->ID;
-                    $obj->Title = $this->Name;
-                    $obj->DetailedInfo = $result;
-                    $obj->write();
-                }
+
+
+        $className = $this->getRelevantLogEntryClassName();
+
+        if (class_exists($className)) {
+            $obj = $className::create();
+            if (is_a($obj, Object::getCustomClass('OrderStatusLog'))) {
+                $obj->OrderID = $order->ID;
+                $obj->Title = $this->Name;
+                $obj->DetailedInfo = $result;
+                $obj->write();
             }
-
-        }
-        catch (Exception $e) {
-            $e->getMessage();
         }
 
         return true;
