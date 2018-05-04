@@ -4,7 +4,10 @@
 
 class OrderStepFeefo extends OrderStep
 {
-    private static $verbose = false;
+
+    private static $db = array(
+        'FeedbackDelay' => 'Int'
+    );
 
 
     private static $defaults = array(
@@ -21,6 +24,15 @@ class OrderStepFeefo extends OrderStep
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();
+        $fields->removeByName('FeedbackDelay');
+
+        $fields->addFieldToTab(
+            'Root.Feefo',
+            NumericField::create(
+                'FeedbackDelay',
+                'Feedback Delay'
+            )
+        );
 
         return $fields;
     }
@@ -32,15 +44,30 @@ class OrderStepFeefo extends OrderStep
 
     public function doStep(Order $order)
     {
+
         $api = Injector::inst()->get('EntersaleremotelyAPIConnector');
         try {
-            $result = $api->sendOrderDataToFeefo($order);
+            $result = $api->sendOrderDataToFeefo($order, $this->FeedbackDelay);
+            $result = $this->convertArrayToHTMLList($result);
+
+            $className = $this->getRelevantLogEntryClassName();
+
+            if (class_exists($className)) {
+                $obj = $className::create();
+                if (is_a($obj, Object::getCustomClass('OrderStatusLog'))) {
+                    $obj->OrderID = $order->ID;
+                    $obj->Title = $this->Name;
+                    $obj->DetailedInfo = $result;
+                    $obj->write();
+                }
+            }
+
         }
         catch (Exception $e) {
             $e->getMessage();
         }
 
-        return false;
+        return true;
     }
 
     /**
@@ -50,8 +77,7 @@ class OrderStepFeefo extends OrderStep
      **/
     public function nextStep(Order $order)
     {
-
-        return null;
+        return parent::nextStep($order);
     }
 
     /**
@@ -72,5 +98,12 @@ class OrderStepFeefo extends OrderStep
         return "The customer and order data is sent to Feefo via the Entersaleremotely API.";
     }
 
-
+    public function convertArrayToHTMLList($array){
+        $html = '<ul>';
+        foreach($array as $arrayItem){
+            $html .= '<li>' . $arrayItem . '</li>';
+        }
+        $html .= '</ul>';
+        return $html;
+    }
 }

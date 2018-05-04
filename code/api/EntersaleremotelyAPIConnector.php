@@ -27,17 +27,18 @@ class EntersaleremotelyAPIConnector extends Object
      * sends the order data from the website to feefo using the Entersaleremotely API
      *
      * @param  Order $order - the order to be assessed
+     * @param  int $delay - number of days to wait before feefo will send the feedback email
      *
      * @return array $messages - an array of message regarding the success of each curl request - one for each Order Item
      */
-    public function sendOrderDataToFeefo($order)
+    public function sendOrderDataToFeefo($order, $delay = 0)
     {
         $messages = [];
         //api details
         $apiKey = Config::inst()->get('EntersaleremotelyAPIConnector', 'api_key');
         $merchant = Config::inst()->get('EntersaleremotelyAPIConnector', 'merchant_identifier');
 
-        //member specifi details
+        //member specific details
         $member = $order->Member();
         $email = $member->Email;
         $name = $member->FirstName;
@@ -47,16 +48,24 @@ class EntersaleremotelyAPIConnector extends Object
         //order specific details
         $orderRef = $order->ID;
         $currency = $order->CurrencyUsed()->Code;
-        $date = date('Y-m-d', strtotime($order->Created));;
+        $dateAsString = strtotime($order->Created);
+        $date = date('Y-m-d', $dateAsString);
+
+        $feedbackDate = '';
+        if($delay){
+            $feedbackDate = date( 'Y-m-d', strtotime('+' . $delay . ' days', $dateAsString) );
+        }
 
         foreach ($order->Items() as $orderItem) {
             $amount = $orderItem->CalculatedTotal;
             $product = $orderItem->Product();
+            $productTitle = $product->Title;
             $link = Director::absoluteURL($product->Link());
 
             $params = [
                 'apikey' => $apiKey,
                 'merchantidentifier' => $merchant,
+                'feedbackdate' => $feedbackDate,
                 'email' =>$email,
                 'name' => $name,
                 'locale' => $locale,
@@ -65,11 +74,15 @@ class EntersaleremotelyAPIConnector extends Object
                 'date' => $date,
                 'currency' => $currency,
                 'amount ' => $orderItem->CalculatedTotal,
-                'description' => $product->Title,
-                'productsearchcode'=> $product->Title,
+                'description' => $productTitle,
+                'productsearchcode'=> $productTitle,
                 'productlink' => 'https://www.picspeanutbutter.com/buy/buy-online/380g-smooth-no-salt/'
             ];
+
             $result = $this->sendCurlRequest($params);
+
+            $result .= ' Order ID: ' . $orderRef . '; Product: ' . $productTitle . ';';
+
             array_push($messages, $result);
         }
 
