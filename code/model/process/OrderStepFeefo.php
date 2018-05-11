@@ -13,6 +13,7 @@ class OrderStepFeefo extends OrderStep
     protected $relevantLogEntryClassName = 'OrderStatusLog_FeefoLog';
 
     private static $db = array(
+        'SendData' => 'Boolean',
         'FeedbackDelay' => 'Int'
     );
 
@@ -51,23 +52,25 @@ class OrderStepFeefo extends OrderStep
 
     public function doStep(Order $order)
     {
+        if ($this->SendData) {
 
-        $api = Injector::inst()->get('EntersaleremotelyAPIConnector');
+            $api = Injector::inst()->get('EntersaleremotelyAPIConnector');
 
-        $result = $api->sendOrderDataToFeefo($order, $this->FeedbackDelay);
-        $result = $this->convertArrayToHTMLList($result);
+            $result = $api->sendOrderDataToFeefo($order, $this->FeedbackDelay);
+            $result = $this->convertArrayToHTMLList($result);
 
 
 
-        $className = $this->getRelevantLogEntryClassName();
+            $className = $this->getRelevantLogEntryClassName();
 
-        if (class_exists($className)) {
-            $obj = $className::create();
-            if (is_a($obj, Object::getCustomClass('OrderStatusLog'))) {
-                $obj->OrderID = $order->ID;
-                $obj->Title = $this->Name;
-                $obj->DetailedInfo = $result;
-                $obj->write();
+            if (class_exists($className)) {
+                $obj = $className::create();
+                if (is_a($obj, Object::getCustomClass('OrderStatusLog'))) {
+                    $obj->OrderID = $order->ID;
+                    $obj->Title = $this->Name;
+                    $obj->DetailedInfo = $result;
+                    $obj->write();
+                }
             }
         }
 
