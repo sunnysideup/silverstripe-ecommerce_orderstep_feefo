@@ -34,13 +34,20 @@ class OrderStepFeefo extends OrderStep
         $fields = parent::getCMSFields();
         $fields->removeByName('FeedbackDelay');
 
-        $fields->addFieldToTab(
+        $fields->addFieldsToTab(
             'Root.Feefo',
-            NumericField::create(
-                'FeedbackDelay',
-                'Feedback Delay'
-            )
+            [
+                CheckboxField::create(
+                    'SendData',
+                    'Send Data'
+                )->setRightTitle('If checked then the order data will be sent to Feefo, once this order step is reached.'),
+                NumericField::create(
+                    'FeedbackDelay',
+                    'Feedback Delay'
+                )->setRightTitle('The amount of after the order has been sent before Feefo should send the feedback request email.')
+            ]
         );
+
 
         return $fields;
     }
