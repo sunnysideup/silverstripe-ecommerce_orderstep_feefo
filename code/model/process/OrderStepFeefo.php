@@ -40,7 +40,7 @@ class OrderStepFeefo extends OrderStep
                 CheckboxField::create(
                     'SendData',
                     'Send Data'
-                )->setRightTitle('If checked then the order data will be sent to Feefo, once this order step is reached.'),
+                )->setDescription('If checked then the order data will be sent to Feefo, once this order step is reached.'),
                 NumericField::create(
                     'FeedbackDelay',
                     'Feedback Delay'
