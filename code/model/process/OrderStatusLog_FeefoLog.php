@@ -9,7 +9,6 @@
  **/
 class OrderStatusLog_FeefoLog extends OrderStatusLog
 {
-
     private static $db = array(
         'DetailedInfo' => 'HTMLText'
     );
@@ -24,7 +23,7 @@ class OrderStatusLog_FeefoLog extends OrderStatusLog
         $order = $this->Order();
         if ($order && $order->exists()) {
             $status = $order->MyStep();
-            if($status && $status->Code == 'FEEFO') {
+            if ($status && $status->Code == 'FEEFO') {
                 return parent::canEdit($member);
             } else {
                 return false;

@@ -59,9 +59,7 @@ class OrderStepFeefo extends OrderStep
 
     public function doStep(Order $order)
     {
-        if ($this->SendData && $order->IsPaid()) 
-        {
-
+        if ($this->SendData && $order->IsPaid()) {
             $api = Injector::inst()->get('EntersaleremotelyAPIConnector');
 
             $result = $api->sendOrderDataToFeefo($order, $this->FeedbackDelay);
@@ -113,9 +111,10 @@ class OrderStepFeefo extends OrderStep
         return "The customer and order data is sent to Feefo via the Entersaleremotely API.";
     }
 
-    public function convertArrayToHTMLList($array){
+    public function convertArrayToHTMLList($array)
+    {
         $html = '<ul>';
-        foreach($array as $arrayItem){
+        foreach ($array as $arrayItem) {
             $html .= '<li>' . $arrayItem . '</li>';
         }
         $html .= '</ul>';

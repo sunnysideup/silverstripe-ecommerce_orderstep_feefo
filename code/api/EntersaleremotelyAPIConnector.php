@@ -52,8 +52,8 @@ class EntersaleremotelyAPIConnector extends Object
         $date = date('Y-m-d', $dateAsString);
 
         $feedbackDate = '';
-        if($delay){
-            $feedbackDate = date( 'Y-m-d', strtotime('+' . $delay . ' days', $dateAsString) );
+        if ($delay) {
+            $feedbackDate = date('Y-m-d', strtotime('+' . $delay . ' days', $dateAsString));
         }
 
         foreach ($order->Items() as $orderItem) {
@@ -115,6 +115,4 @@ class EntersaleremotelyAPIConnector extends Object
         curl_close($ch);
         return $reply;
     }
-
-
 }
