@@ -59,7 +59,8 @@ class OrderStepFeefo extends OrderStep
 
     public function doStep(Order $order)
     {
-        if ($this->SendData) {
+        if ($this->SendData && $order->IsPaid()) 
+        {
 
             $api = Injector::inst()->get('EntersaleremotelyAPIConnector');
 
